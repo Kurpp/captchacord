@@ -1,6 +1,7 @@
 {
   "name": "captchacord-backend",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "license": "MIT",
   "author": "Kurpp",
@@ -11,7 +12,7 @@
   },
   "private": true,
   "scripts": {
-    "start": "node dist/index.mjs",
+    "start": "node .",
     "build": "tsup",
     "dev": "tsup --watch --onSuccess \"yarn start\""
   },
