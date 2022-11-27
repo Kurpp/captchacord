@@ -1,0 +1,21 @@
+{
+  "name": "captchacord-backend",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "private": true,
+  "scripts": {
+    "start": "node dist/index.mjs",
+    "build": "tsup",
+    "dev": "tsup --watch --onSuccess \"yarn start\""
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fastify": "^4.10.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.3.19",
+    "tsconfig": "*",
+    "tsup": "^6.5.0",
+    "typescript": "^4.9.3"
+  }
+}
