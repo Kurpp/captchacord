@@ -2,6 +2,13 @@
   "name": "captchacord-backend",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "license": "MIT",
+  "author": "Kurpp",
+  "repository": {
+    "url": "https://github.com/Kurpp/captchacord.git",
+    "type": "git",
+    "directory": "apps/Backend"
+  },
   "private": true,
   "scripts": {
     "start": "node dist/index.mjs",
