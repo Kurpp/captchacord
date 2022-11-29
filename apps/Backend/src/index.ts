@@ -2,9 +2,10 @@ import "dotenv/config";
 import fastify from "fastify";
 import { fileURLToPath } from "url";
 import { join, dirname } from "path";
-import { Profile, Strategy } from "passport-discord";
+import fastifyCors from "@fastify/cors";
 import fastifyPassport from "@fastify/passport";
 import fastifyAutoload from "@fastify/autoload";
+import { Profile, Strategy } from "passport-discord";
 import fastifySecureSession from "@fastify/secure-session";
 
 const cache = new Map<string, Profile>();
@@ -13,6 +14,9 @@ const server = fastify();
 
 server.register(fastifySecureSession, {
   key: Buffer.from(process.env.SECRET_KEY!, "hex"),
+  cookie: {
+    path: '/',
+  },
 });
 
 server.register(fastifyPassport.initialize());
@@ -40,6 +44,11 @@ fastifyPassport.use(
 
 fastifyPassport.registerUserSerializer(async (user: Profile) => user.id);
 fastifyPassport.registerUserDeserializer(async (id: string) => cache.get(id));
+
+server.register(fastifyCors, {
+  origin: process.env.CORS_ORIGIN!,
+  credentials: true,
+});
 
 server.register(fastifyAutoload, {
   dir: join(dirname(fileURLToPath(import.meta.url)), "routes"),
