@@ -3,47 +3,24 @@ import fastify from "fastify";
 import { fileURLToPath } from "url";
 import { join, dirname } from "path";
 import fastifyCors from "@fastify/cors";
+import setupPassport from "./utils/passport.js";
 import fastifyPassport from "@fastify/passport";
 import fastifyAutoload from "@fastify/autoload";
-import { Profile, Strategy } from "passport-discord";
 import fastifySecureSession from "@fastify/secure-session";
-
-const cache = new Map<string, Profile>();
 
 const server = fastify();
 
 server.register(fastifySecureSession, {
   key: Buffer.from(process.env.SECRET_KEY!, "hex"),
   cookie: {
-    path: '/',
+    path: "/",
   },
 });
 
 server.register(fastifyPassport.initialize());
 server.register(fastifyPassport.secureSession());
 
-fastifyPassport.use(
-  new Strategy(
-    {
-      clientID: process.env.CLIENT_ID!,
-      clientSecret: process.env.CLIENT_SECRET!,
-      callbackURL: process.env.CALLBACK_URL!,
-      scope: ["identify", "guilds"],
-    },
-    (_, __, account, cb) => {
-      cache.set(account.id, account);
-
-      setTimeout(() => {
-        cache.delete(account.id);
-      }, 10 * 60 * 1000);
-
-      return cb(null, account);
-    }
-  )
-);
-
-fastifyPassport.registerUserSerializer(async (user: Profile) => user.id);
-fastifyPassport.registerUserDeserializer(async (id: string) => cache.get(id));
+setupPassport()
 
 server.register(fastifyCors, {
   origin: process.env.CORS_ORIGIN!,
