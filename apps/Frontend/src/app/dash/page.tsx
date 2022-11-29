@@ -13,7 +13,11 @@ export default function Home() {
   const router = useRouter();
   const { data, error } = useSWR<Profile>("/discord", (url) =>
     fetch(`${process.env.API_URL}${url}`, { credentials: "include" }).then(
-      (r) => r.json()
+      (r) => {
+        if (r.ok) return r.json();
+
+        throw r.json();
+      }
     )
   );
 
