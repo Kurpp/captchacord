@@ -23,7 +23,7 @@ server.register(fastifyPassport.secureSession());
 setupPassport()
 
 server.register(fastifyCors, {
-  origin: process.env.CORS_ORIGIN!,
+  origin: process.env.FRONTEND_URL!,
   credentials: true,
 });
 
