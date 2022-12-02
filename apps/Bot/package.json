@@ -17,7 +17,9 @@
     "dev": "tsup --watch --onSuccess \"yarn start\""
   },
   "dependencies": {
+    "@sapphire/discord.js-utilities": "^5.1.2",
     "@sapphire/framework": "^3.1.4",
+    "discord-api-types": "0.33.x",
     "discord.js": "^13.12.0",
     "dotenv": "^16.0.3"
   },
