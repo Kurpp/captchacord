@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { Intents } from "discord.js";
-import { LogLevel, SapphireClient } from "@sapphire/framework";
+import { PrismaClient } from "@prisma/client";
+import { LogLevel, container, SapphireClient } from "@sapphire/framework";
 
 const client = new SapphireClient({
   intents: [Intents.FLAGS.GUILDS],
@@ -8,5 +9,7 @@ const client = new SapphireClient({
     level: LogLevel.Debug,
   }
 });
+
+container.db = new PrismaClient();
 
 client.login()
