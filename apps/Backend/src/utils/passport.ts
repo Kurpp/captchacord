@@ -34,17 +34,17 @@ export default function setupPassport() {
 
   fastifyPassport.registerUserDeserializer(
     async (token: string, req) =>
-      new Promise((resolve, reject) => {
+      new Promise((resolve) => {
         strat.checkScope("guilds", token, async function (err, guilds) {
           if (err) {
-            return reject(null);
+            return resolve(null);
           }
 
           const cachedUser = cache.get(token);
 
           if (!cachedUser) {
             await req.logout();
-            return reject(null);
+            return resolve(null);
           }
 
           const user = Object.assign(cachedUser, { guilds });
