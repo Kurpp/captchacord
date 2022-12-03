@@ -316,6 +316,11 @@
   resolved "https://registry.yarnpkg.com/@sapphire/async-queue/-/async-queue-1.5.0.tgz#2f255a3f186635c4fb5a2381e375d3dfbc5312d8"
   integrity sha512-JkLdIsP8fPAdh9ZZjrbHWR/+mZj0wvKS5ICibcLrRI1j84UmLMshx5n9QmL8b95d4onJ2xxiyugTgSAX7AalmA==
 
+"@sapphire/bitfield@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@sapphire/bitfield/-/bitfield-1.0.0.tgz#5edb9e377fc04628d528bca562bc5d5e4e00f074"
+  integrity sha512-gbcprMwXIzHtUGbplloJ0BXQE8hugYQyVCpXY24346Ked0HHMxje39A9Sz7Eu80ibtHTBLbeu4JTLV/j85JNww==
+
 "@sapphire/discord-utilities@^2.12.0":
   version "2.12.0"
   resolved "https://registry.yarnpkg.com/@sapphire/discord-utilities/-/discord-utilities-2.12.0.tgz#d0ec3d345877593142cddbfcd08e5420868bf055"
