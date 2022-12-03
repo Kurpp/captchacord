@@ -1,5 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import fastifyPassport from "@fastify/passport";
+import { requireAuth } from "../middlewares/auth_middleware.js";
 
 export default async function (router: FastifyInstance) {
   router.get(
@@ -10,10 +11,14 @@ export default async function (router: FastifyInstance) {
     })
   );
 
-  router.get("/", (req, res) =>
-    req.isAuthenticated()
-      ? res.send(req.user)
-      : res.status(400).send({ statusCode: 400, message: "Not authenticated" })
+  router.get(
+    "/",
+    {
+      preHandler: requireAuth,
+    },
+    async (req, res) => {
+      res.send(req.user);
+    }
   );
 }
 
