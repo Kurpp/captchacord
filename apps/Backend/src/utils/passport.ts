@@ -40,14 +40,14 @@ export default function setupPassport() {
       new Promise((resolve, reject) => {
         strat.checkScope("guilds", token, async function (err, guilds) {
           if (err) {
-            return reject("Invalid token");
+            return reject(null);
           }
 
           const cachedUser = cache.get(token);
 
           if (!cachedUser) {
             await req.logout();
-            return reject("User not found");
+            return reject(null);
           }
 
           const user = Object.assign(cachedUser, { guilds });
