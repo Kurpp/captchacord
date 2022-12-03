@@ -1,4 +1,5 @@
 import fastifyPassport from "@fastify/passport";
+import { OAuth2Scopes } from "discord-api-types/v10"
 import { Profile, Strategy } from "passport-discord";
 
 interface User extends Profile {
@@ -13,7 +14,7 @@ export default function setupPassport() {
       clientID: process.env.CLIENT_ID!,
       clientSecret: process.env.CLIENT_SECRET!,
       callbackURL: process.env.CALLBACK_URL!,
-      scope: ["identify", "guilds"],
+      scope: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
     },
     (access, _, profile, cb) => {
       const account = Object.assign(profile, { access_token: access });
