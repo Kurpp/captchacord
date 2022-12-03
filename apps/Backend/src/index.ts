@@ -2,6 +2,7 @@ import "dotenv/config";
 import fastify from "fastify";
 import { fileURLToPath } from "url";
 import { join, dirname } from "path";
+import { REST } from "@discordjs/rest";
 import fastifyCors from "@fastify/cors";
 import setupPassport from "./utils/passport.js";
 import fastifyPassport from "@fastify/passport";
@@ -9,6 +10,8 @@ import fastifyAutoload from "@fastify/autoload";
 import fastifySecureSession from "@fastify/secure-session";
 
 const server = fastify();
+
+server.rest = new REST({version: "10"}).setToken(process.env.DISCORD_TOKEN!);
 
 server.register(fastifySecureSession, {
   key: Buffer.from(process.env.SECRET_KEY!, "hex"),
@@ -20,7 +23,7 @@ server.register(fastifySecureSession, {
 server.register(fastifyPassport.initialize());
 server.register(fastifyPassport.secureSession());
 
-setupPassport()
+setupPassport();
 
 server.register(fastifyCors, {
   origin: process.env.FRONTEND_URL!,

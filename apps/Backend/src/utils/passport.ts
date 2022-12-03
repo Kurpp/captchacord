@@ -1,10 +1,7 @@
+import type { User } from "../typings";
+import { Strategy } from "passport-discord";
 import fastifyPassport from "@fastify/passport";
 import { OAuth2Scopes } from "discord-api-types/v10"
-import { Profile, Strategy } from "passport-discord";
-
-interface User extends Profile {
-  access_token: string;
-}
 
 const cache = new Map<string, User>();
 

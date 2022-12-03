@@ -17,9 +17,10 @@
     "dev": "tsup --watch --onSuccess \"yarn start\""
   },
   "dependencies": {
+    "@discordjs/rest": "^1.4.0",
     "@fastify/autoload": "^5.6.0",
     "@fastify/cors": "^8.2.0",
-    "discord-api-types": "^0.37.20",
+    "discord-api-types": "0.33.x",
     "dotenv": "^16.0.3",
     "fastify": "^4.10.2",
     "passport-discord": "^0.1.4"
