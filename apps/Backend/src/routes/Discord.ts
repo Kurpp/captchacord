@@ -2,10 +2,10 @@ import {
   requireAuth,
   mustManageGuild,
 } from "../middlewares/auth_middleware.js";
-import { Routes, type APIGuild } from "discord-api-types/v10";
 import type { FastifyInstance } from "fastify";
 import fastifyPassport from "@fastify/passport";
 import type { Strategy } from "passport-discord";
+import { Routes, type APIGuild } from "discord-api-types/v10";
 
 export default async function (router: FastifyInstance) {
   const { db, rest } = router;
@@ -15,29 +15,8 @@ export default async function (router: FastifyInstance) {
     fastifyPassport.authenticate("discord", {
       failureRedirect: "/",
       successRedirect: `${process.env.FRONTEND_URL}/manage`,
+
     })
-  );
-
-  router.get<{ Params: { id: string } }>(
-    "/guild/:id",
-    {
-      preHandler: [requireAuth, mustManageGuild],
-    },
-    async (req, res) => {
-      try {
-        const verifyMessage = await db.verifyMessage.findFirst({
-          where: {
-            guildId: req.params.id,
-          },
-        });
-
-        return res.send({
-          verifyMessage,
-        });
-      } catch (e: any) {
-        return res.status(500).send({ statusCode: 500, message: e.message });
-      }
-    }
   );
 
   router.get(
@@ -69,6 +48,42 @@ export default async function (router: FastifyInstance) {
         return res
           .status(400)
           .send({ statusCode: 400, message: "Something went wrong" });
+      }
+    }
+  );
+
+  router.get<{ Params: { id: string } }>(
+    "/guilds/:id",
+    {
+      preHandler: [requireAuth, mustManageGuild],
+    },
+    async (req, res) => {
+      const {id} = req.params;
+
+      try {
+        const guild = await rest.get(Routes.guild(id)) as APIGuild;
+        const channels = await rest.get(Routes.guildChannels(id));
+
+        if (!guild) {
+          return res.status(404).send({
+            statusCode: 404,
+            message: "Guild not found",
+          });
+        }
+
+        const verifyMessage = await db.verifyMessage.findFirst({
+          where: {
+            guildId: id,
+          },
+        });
+
+        return res.send({
+          ...guild,
+          channels,
+          verifyMessage,
+        });
+      } catch (e: any) {
+        return res.status(500).send({ statusCode: 500, message: e.message });
       }
     }
   );
