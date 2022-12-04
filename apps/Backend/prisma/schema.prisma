@@ -1,0 +1,20 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model VerifyMessage {
+  id        String @id @default(uuid()) @db.VarChar(20)
+  channelId String @db.VarChar(20)
+  guildId   String @unique @db.VarChar(20)
+  content   String @db.VarChar(2000)
+
+  @@map("verify_messages")
+}

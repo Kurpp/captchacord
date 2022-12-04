@@ -17,3 +17,25 @@ export async function requireAuth(
 
   return next();
 }
+
+export async function mustManageGuild(
+  req: FastifyRequest<{ Params: { id?: string } }>,
+  res: FastifyReply,
+  next: HookHandlerDoneFunction
+) {
+  const { id } = req.params;
+
+  if (!id) {
+    return res
+      .status(400)
+      .send({ statusCode: 400, message: "Missing guild id" });
+  }
+
+  if (!req.user!.guilds?.some((g) => g.id === id)) {
+    return res
+      .status(400)
+      .send({ statusCode: 400, message: "You cannot manage this guild0" });
+  }
+
+  return next();
+}

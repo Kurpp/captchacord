@@ -1,15 +1,14 @@
 import {
-  Routes,
-  type APIGuild,
-} from "discord-api-types/v10";
+  requireAuth,
+  mustManageGuild,
+} from "../middlewares/auth_middleware.js";
+import { Routes, type APIGuild } from "discord-api-types/v10";
 import type { FastifyInstance } from "fastify";
 import fastifyPassport from "@fastify/passport";
 import type { Strategy } from "passport-discord";
-import { requireAuth } from "../middlewares/auth_middleware.js";
 
 export default async function (router: FastifyInstance) {
-  const { rest } = router;
-
+  const { db, rest } = router;
 
   router.get(
     "/login",
@@ -17,6 +16,28 @@ export default async function (router: FastifyInstance) {
       failureRedirect: "/",
       successRedirect: `${process.env.FRONTEND_URL}/dash`,
     })
+  );
+
+  router.get<{ Params: { id: string } }>(
+    "/guild/:id",
+    {
+      preHandler: [requireAuth, mustManageGuild],
+    },
+    async (req, res) => {
+      try {
+        const verifyMessage = await db.verifyMessage.findFirst({
+          where: {
+            guildId: req.params.id,
+          },
+        });
+
+        return res.send({
+          verifyMessage,
+        });
+      } catch (e: any) {
+        return res.status(500).send({ statusCode: 500, message: e.message });
+      }
+    }
   );
 
   router.get(
@@ -31,15 +52,14 @@ export default async function (router: FastifyInstance) {
         )) as APIGuild[];
 
         const botGuilds: Strategy.GuildInfo[] = [];
-        const userGuilds = req.user!.guilds
-          ?.filter((g) => {
-            if (rawBotGuilds.some((bg) => bg.id === g.id)) {
-              botGuilds.push(g);
-              return false;
-            }
+        const userGuilds = req.user!.guilds?.filter((g) => {
+          if (rawBotGuilds.some((bg) => bg.id === g.id)) {
+            botGuilds.push(g);
+            return false;
+          }
 
-            return true;
-          });
+          return true;
+        });
 
         return res.send({
           botGuilds,

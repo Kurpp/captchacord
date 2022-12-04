@@ -6,6 +6,7 @@ import type { PrismaClient } from "@prisma/client";
 declare module "fastify" {
   interface FastifyInstance {
     rest: REST;
+    db: PrismaClient;
   }
   interface PassportUser extends User {}
 }

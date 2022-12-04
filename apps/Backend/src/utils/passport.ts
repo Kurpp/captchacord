@@ -5,7 +5,7 @@ import fastifyPassport from "@fastify/passport";
 import { OAuth2Scopes, PermissionFlagsBits } from "discord-api-types/v10";
 
 const cache = new Map<string, User>();
-const permissions = new BitField(PermissionFlagsBits);
+const permissions = new BitField(PermissionFlagsBits);  
 
 export default function setupPassport() {
   const strat = new Strategy(
@@ -43,13 +43,13 @@ export default function setupPassport() {
 
   fastifyPassport.registerUserDeserializer(
     async (token: string, req) =>
-      new Promise((resolve) => {
+      new Promise((resolve, reject) => {
         strat.checkScope(
           "guilds",
           token,
           async function (err, guilds: Strategy.GuildInfo[]) {
             if (err) {
-              return resolve(null);
+              return reject(err);
             }
 
             const cachedUser = cache.get(token);

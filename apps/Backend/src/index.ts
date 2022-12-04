@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { join, dirname } from "path";
 import { REST } from "@discordjs/rest";
 import fastifyCors from "@fastify/cors";
+import { PrismaClient } from "@prisma/client";
 import setupPassport from "./utils/passport.js";
 import fastifyPassport from "@fastify/passport";
 import fastifyAutoload from "@fastify/autoload";
@@ -11,6 +12,7 @@ import fastifySecureSession from "@fastify/secure-session";
 
 const server = fastify();
 
+server.db = new PrismaClient();
 server.rest = new REST({version: "10"}).setToken(process.env.DISCORD_TOKEN!);
 
 server.register(fastifySecureSession, {
