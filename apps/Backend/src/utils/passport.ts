@@ -67,7 +67,9 @@ export default function setupPassport(server: FastifyInstance) {
               ),
             });
 
-            cache.set(token, JSON.stringify(user));
+            cache.set(token, JSON.stringify(user), {
+              EX: await cache.ttl(token),
+            });
 
             return resolve(user);
           }
