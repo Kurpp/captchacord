@@ -2,6 +2,7 @@ import "dotenv/config";
 import fastify from "fastify";
 import { fileURLToPath } from "url";
 import { join, dirname } from "path";
+import { createClient } from "redis";
 import { REST } from "@discordjs/rest";
 import fastifyCors from "@fastify/cors";
 import { PrismaClient } from "@prisma/client";
@@ -13,7 +14,10 @@ import fastifySecureSession from "@fastify/secure-session";
 const server = fastify();
 
 server.db = new PrismaClient();
-server.rest = new REST({version: "10"}).setToken(process.env.DISCORD_TOKEN!);
+server.rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN!);
+server.cache = createClient({ url: process.env.REDIS_URL });
+
+server.cache.on("error", (err) => console.log(`redis:\n${err}`))
 
 server.register(fastifySecureSession, {
   key: Buffer.from(process.env.SECRET_KEY!, "hex"),
@@ -25,7 +29,7 @@ server.register(fastifySecureSession, {
 server.register(fastifyPassport.initialize());
 server.register(fastifyPassport.secureSession());
 
-setupPassport();
+setupPassport(server);
 
 server.register(fastifyCors, {
   origin: process.env.FRONTEND_URL!,
@@ -44,5 +48,5 @@ server.listen(
   (err, address) =>
     err
       ? (console.error(err), process.exit(1))
-      : console.log(`Server listening on ${address}`)
+      : (server.cache.connect(), console.log(`Server listening on ${address}`))
 );

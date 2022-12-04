@@ -25,7 +25,8 @@
     "discord-api-types": "0.33.x",
     "dotenv": "^16.0.3",
     "fastify": "^4.10.2",
-    "passport-discord": "^0.1.4"
+    "passport-discord": "^0.1.4",
+    "redis": "^4.5.1"
   },
   "devDependencies": {
     "@fastify/passport": "^2.2.0",

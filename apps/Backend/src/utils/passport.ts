@@ -1,13 +1,15 @@
 import type { User } from "../typings";
 import { Strategy } from "passport-discord";
 import { BitField } from "@sapphire/bitfield";
+import type { FastifyInstance } from "fastify";
 import fastifyPassport from "@fastify/passport";
 import { OAuth2Scopes, PermissionFlagsBits } from "discord-api-types/v10";
 
-const cache = new Map<string, User>();
-const permissions = new BitField(PermissionFlagsBits);  
+const permissions = new BitField(PermissionFlagsBits);
 
-export default function setupPassport() {
+export default function setupPassport(server: FastifyInstance) {
+  const { cache } = server;
+
   const strat = new Strategy(
     {
       clientID: process.env.CLIENT_ID!,
@@ -15,7 +17,7 @@ export default function setupPassport() {
       callbackURL: process.env.CALLBACK_URL!,
       scope: [OAuth2Scopes.Identify, OAuth2Scopes.Guilds],
     },
-    (access, _, profile, cb) => {
+    async (access, _, profile, cb) => {
       const account = Object.assign(profile, {
         guilds: profile.guilds?.filter((guild) =>
           permissions
@@ -25,11 +27,9 @@ export default function setupPassport() {
         access_token: access,
       });
 
-      cache.set(access, account);
-
-      setTimeout(() => {
-        cache.delete(access);
-      }, 10 * 60 * 1000);
+      await cache.set(access, JSON.stringify(account), {
+        EX: 60 * 10,
+      });
 
       return cb(null, account);
     }
@@ -52,14 +52,14 @@ export default function setupPassport() {
               return reject(err);
             }
 
-            const cachedUser = cache.get(token);
+            const cachedUser = await cache.get(token);
 
             if (!cachedUser) {
               await req.logout();
               return resolve(null);
             }
 
-            const user = Object.assign(cachedUser, {
+            const user = Object.assign(JSON.parse(cachedUser), {
               guilds: guilds?.filter((guild) =>
                 permissions
                   .toArray(BigInt(guild.permissions!))
@@ -67,7 +67,7 @@ export default function setupPassport() {
               ),
             });
 
-            cache.set(token, user);
+            cache.set(token, JSON.stringify(user));
 
             return resolve(user);
           }
