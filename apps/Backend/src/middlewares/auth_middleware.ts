@@ -34,7 +34,7 @@ export async function mustManageGuild(
   if (!req.user!.guilds?.some((g) => g.id === id)) {
     return res
       .status(400)
-      .send({ statusCode: 400, message: "You cannot manage this guild0" });
+      .send({ statusCode: 400, message: "You cannot manage this guild" });
   }
 
   return next();
