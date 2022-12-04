@@ -14,7 +14,7 @@ export default async function (router: FastifyInstance) {
     "/login",
     fastifyPassport.authenticate("discord", {
       failureRedirect: "/",
-      successRedirect: `${process.env.FRONTEND_URL}/dash`,
+      successRedirect: `${process.env.FRONTEND_URL}/manage`,
     })
   );
 
