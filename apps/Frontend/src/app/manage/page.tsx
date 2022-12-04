@@ -1,6 +1,7 @@
 "use client";
 
 import useSWR from "swr";
+import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { GuildsResponse } from "../../typings/API";
@@ -34,7 +35,9 @@ export default function Home() {
           {data.botGuilds
             .sort((a, b) => a.name.length - b.name.length)
             .map((guild) => (
-              <p key={guild.id}>{guild.name}</p>
+              <Link key={guild.id} href={`/manage/${guild.id}`}>
+                {guild.name}
+              </Link>
             ))}
         </div>
         <div className="tw-grid tw-gap-2 tw-grid-cols-4">
