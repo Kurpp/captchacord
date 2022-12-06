@@ -17,6 +17,7 @@ server.db = new PrismaClient();
 server.rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN!);
 server.cache = createClient({ url: process.env.REDIS_URL });
 
+server.cache.on("ready", () => console.log("Connected to redis"))
 server.cache.on("error", (err) => console.log(`redis:\n${err}`))
 
 server.register(fastifySecureSession, {
